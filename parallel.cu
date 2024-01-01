@@ -2,9 +2,9 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <driver_functions.h>
-// #include "../Board.hpp"
+#include "Board.hpp"
 #include "parallelsudoku.cuh"
-// #include "../CycleTimer.h"
+#include "CycleTimer.h"
 #define UPDIV(n, d) (((n)+(d)-1)/(d))
 const int threadsPerBlock = 512;
 

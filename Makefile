@@ -1,6 +1,6 @@
 EXECUTABLE := cudaSudoku
 
-CU_FILES   := parallel.cu
+CU_FILES   := parallelsudoku.cu
 CU_DEPS    :=
 CC_FILES   := main.cpp
 CUDA_PATH       ?= /usr/local/cuda
@@ -20,7 +20,7 @@ CXX=g++ -I/usr/local/cuda/include -std=c++11 -m64
 CXXFLAGS=-O3 -Wall
 LDFLAGS=-L/usr/local/cuda/lib64/ -lcudart
 NVCC=nvcc
-NVCCFLAGS=-O3 -std=c++11 -m64 --gpu-architecture compute_35
+NVCCFLAGS=-O3 -std=c++11 -m64 --gpu-architecture compute_50
 
 
 OBJS=$(OBJDIR)/main.o  $(OBJDIR)/parallelsudoku.o
