@@ -13,7 +13,7 @@ using namespace std;
 int main(int argc, char* argv[]) {
     // read sudoku board from file
     int board[boardSize * boardSize];
-    ifstream myFiLE ("sudoku.txt");
+    ifstream myFile ("sudoku.txt");
     for (int i = 0; i < boardSize * boardSize; i++) {
         for (int j = 0; j < boardSize; j++) 
             myFile >> board[i*boardSize + j];
