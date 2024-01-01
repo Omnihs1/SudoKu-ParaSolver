@@ -1,0 +1,1 @@
+const int boardSize = 9;
