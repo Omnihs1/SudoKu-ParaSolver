@@ -1,6 +1,6 @@
 EXECUTABLE := cudaSudoku
 
-CU_FILES   := parallelsudoku.cu
+CU_FILES   := parallel.cu
 CU_DEPS    :=
 CC_FILES   := main.cpp
 CUDA_PATH       ?= /usr/local/cuda
