@@ -49,7 +49,7 @@ int getTotalUnfilledCellsNum(int matrix[size * size]) {
     int cnt = 0;
     for (int i = 0; i < size; i++)
         for (int j = 0; j < size; j++)
-            cnt += (matrix[i][j] == 0);
+            cnt += (matrix[i*size + j] == 0);
     return cnt;
 }
 
