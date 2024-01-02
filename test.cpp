@@ -54,7 +54,7 @@ int getTotalUnfilledCellsNum(int matrix[size * size]) {
 }
 
 bool checkDone(int matrix[size * size]) {
-    int emptyCnt;;
+    int emptyCnt;
     emptyCnt = getTotalUnfilledCellsNum(matrix);
     return (emptyCnt == 0);
 }

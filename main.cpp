@@ -28,8 +28,10 @@ int main(int argc, char* argv[]) {
     }
     bool done = false;
     double time = CycleTimer::currentSeconds();
+    int count_one_markup;
     while (!done){
         // 0. initial markup
+        count_one_markup = 0
         vector<int> markup[81]; 
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
@@ -38,17 +40,21 @@ int main(int argc, char* argv[]) {
                         markup[i*boardSize + j].push_back(k);
                     }
                 }
+                count_one_markup += (markup[i*boardSize + j].size() == 1);
             }
         }
-        // 1. elimination
+        cout << "\n" << count_one_markup << endl;
 #ifndef NDEBUG
         for(int i=0;i<81;i++)
             cout<<"number of markup in row number "<<i+1<<" is "<<markup[i].size()<<endl;  
 #endif
+        if(count_one_markup == 0){break;}
+        // 1. elimination
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
                 if (markup[i*boardSize + j].size() == 1) {
                     board[i*boardSize + j] = markup[i*boardSize + j][0];
+                    markup[i*boardSize + j].clear();
                 }
             }
         }
