@@ -124,7 +124,7 @@ void BoardGenerationKernel(int* prev_boards, int* board_num, int prev_board_num,
 }
 
 void 
-BoardGenerator(int* prev_boards, int* prev_board_num, int* new_boards, int memSize) {
+BoardGenerator(int* prev_boards, int* prev_board_num, int* new_boards) {
     int i;
     int num = 1;
     for (i = 0; i < DEPTH; i++) {
@@ -135,6 +135,7 @@ BoardGenerator(int* prev_boards, int* prev_board_num, int* new_boards, int memSi
         prev_boards = new_boards;
         new_boards = tmp;
         cudaMemcpy(&num, prev_board_num, sizeof(int), cudaMemcpyDeviceToHost);
+        printf("total boards after an iteration %d: %d\n", i, num);
     }
 }
 

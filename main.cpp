@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
 
     cudaMemcpy(d_old_boards, board, boardSize * boardSize * sizeof(int), cudaMemcpyHostToDevice);
 
-    BoardGenerator(d_old_boards, d_board_num, d_new_boards, memSize);
+    BoardGenerator(d_old_boards, d_board_num, d_new_boards);
     
     cudaMemcpy(&host_board_num, d_board_num, sizeof(int), cudaMemcpyDeviceToHost);
     cudaSudokuSolver(d_new_boards, host_board_num, d_solution);
