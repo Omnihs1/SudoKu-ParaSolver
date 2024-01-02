@@ -6,7 +6,7 @@
 using namespace std;
 const int size = 9;
 const int box_size = 3;
-bool noConflicts(int matrix[size * size], int row, int col, int num) {
+bool noConflictsCPU(int matrix[size * size], int row, int col, int num) {
     if (num > size) return false;
     for (int i = 0; i < size; i++) {
         if (i == row)   continue;
