@@ -92,6 +92,7 @@ int main(int argc, char* argv[]) {
             cudaMalloc(&d_board_num, sizeof(int));
 
             //check allocation memory
+            cudaError_t cudaStatus;
             cudaStatus = cudaMalloc(&d_new_boards, memSize * sizeof(int));
             if (cudaStatus != cudaSuccess) {
                 cout << "cudaMalloc failed for d_new_boards" << endl;
