@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
         int host_solution[boardSize * boardSize];
         int host_board_num = 1;
 
-        for (int DEPTH = 1; DEPTH < 5; DEPTH++){
+        for (int DEPTH = 1; DEPTH < 8; DEPTH++){
             int memSize = 81 * pow(9, DEPTH);
             cout << "DEPTH : " << DEPTH << endl;
             cudaMalloc(&d_new_boards, memSize * sizeof(int));
