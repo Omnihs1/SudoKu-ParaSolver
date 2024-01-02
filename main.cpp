@@ -38,6 +38,9 @@ int main(int argc, char* argv[]) {
             }
         }
         // 1. elimination
+        for(int i=0;i<81;i++)
+            cout<<"number of markup in row number "<<i+1<<" is "<<markup[i].size()<<endl;  
+    
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
                 if (markup[i*boardSize + j].size() == 1) {
