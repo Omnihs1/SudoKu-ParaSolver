@@ -80,8 +80,8 @@ int main(int argc, char* argv[]) {
         int host_solution[boardSize * boardSize];
         int host_board_num = 1;
 
+        int DEPTH = 6;
         const int memSize = 81 * pow(9, DEPTH);
-
 
         cudaMalloc(&d_new_boards, memSize * sizeof(int));
         cudaMalloc(&d_old_boards, memSize * sizeof(int));
@@ -95,7 +95,7 @@ int main(int argc, char* argv[]) {
 
         cudaMemcpy(d_old_boards, board, boardSize * boardSize * sizeof(int), cudaMemcpyHostToDevice);
 
-        BoardGenerator(d_old_boards, d_board_num, d_new_boards);
+        BoardGenerator(d_old_boards, d_board_num, d_new_boards, DEPTH);
         
         cudaMemcpy(&host_board_num, d_board_num, sizeof(int), cudaMemcpyDeviceToHost);
         cudaSudokuSolver(d_new_boards, host_board_num, d_solution);
