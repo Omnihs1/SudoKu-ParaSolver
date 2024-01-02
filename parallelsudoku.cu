@@ -54,11 +54,11 @@ int findNextEmptyCellIndex(int matrix[boardSize*boardSize], int start) {
 // the kernel that solves sudoku problem on each board
 // each thread works on a board in the boards array
 __global__
-void SolvingKernel(int* boards, int boardCnt, int* solution, int numThreads) {
+void SolvingKernel(int* boards, int boardCnt, int* solution, int numThreads, int *finished) {
     int tidx = blockIdx.x * blockDim.x + threadIdx.x;
 
     int localBoard[boardSize*boardSize];
-    for (int idx = tidx; idx < boardCnt; idx += numThreads) {
+    for (int idx = tidx; (idx < boardCnt) && (*finished == 0); idx += numThreads) {
         int emptyCnt = 0;
         int emptyIndex[boardSize*boardSize];
         int start = idx * boardSize * boardSize;
@@ -68,6 +68,7 @@ void SolvingKernel(int* boards, int boardCnt, int* solution, int numThreads) {
                 emptyIndex[emptyCnt++] = i-start;
             }
         }
+        // backtracking algorithm
         int depth = 0;
         while (depth >= 0 && depth < emptyCnt) {
             int next = emptyIndex[depth];
@@ -81,6 +82,9 @@ void SolvingKernel(int* boards, int boardCnt, int* solution, int numThreads) {
             }
         }
         if (depth == emptyCnt) {
+            // solved board found 
+            *finished = 1;
+            // copy board to output
             memcpy(solution, localBoard, boardSize*boardSize*sizeof(int));
             break;
         }
@@ -137,8 +141,11 @@ BoardGenerator(int* prev_boards, int* prev_board_num, int* new_boards, int memSi
 void 
 cudaSudokuSolver(int* boards, int board_num, int* solution) {
     int block = UPDIV(board_num, threadsPerBlock);
+    int *finished;
+    cudaMalloc(&finished, sizeof(int));
+    cudaMemset(finished, 0, sizeof(int));
     double stime = CycleTimer::currentSeconds();
-    SolvingKernel<<<block, threadsPerBlock>>>(boards, board_num, solution, block*threadsPerBlock);
+    SolvingKernel<<<block, threadsPerBlock>>>(boards, board_num, solution, block*threadsPerBlock, finished);
     cudaDeviceSynchronize();
     cout << "cudaSudokuSolver takes time: " << CycleTimer::currentSeconds() - stime << endl;
 }

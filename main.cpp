@@ -18,12 +18,14 @@ int main(int argc, char* argv[]) {
         for (int j = 0; j < boardSize; j++) 
             myFile >> board[i*boardSize + j];
     }
+    // print board
     for (int i = 0; i < boardSize; i++) {
         for (int j = 0; j < boardSize; j++)
             cout << board[i*boardSize+j] << " ";
             cout << endl;
     }
-
+    
+    
     int *d_new_boards;
     int *d_old_boards;
     int *d_solution;
@@ -55,11 +57,13 @@ int main(int argc, char* argv[]) {
     memset(host_solution, 0, boardSize * boardSize * sizeof(int));
     cudaMemcpy(host_solution, d_solution, boardSize * boardSize * sizeof(int), cudaMemcpyDeviceToHost);
 
+    // print solution
     for (int i = 0; i < boardSize; i++) {
         for (int j = 0; j < boardSize; j++)
             cout << host_solution[i*boardSize+j] << " ";
             cout << endl;
     }
+
     // free device memory
     cudaFree(&d_new_boards);
     cudaFree(&d_old_boards);
