@@ -24,7 +24,6 @@ int main(int argc, char* argv[]) {
             cout << board[i*boardSize+j] << " ";
             cout << endl;
     }
-    
     bool done = false;
     while (!done){
         // 0. initial markup
@@ -47,6 +46,7 @@ int main(int argc, char* argv[]) {
             }
         }
         done = checkDone(board);
+        break;
         // 2. lone ranger
         // if(!done){
 
