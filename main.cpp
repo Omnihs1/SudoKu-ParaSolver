@@ -53,6 +53,7 @@ int main(int argc, char* argv[]) {
         // }
         // 3. find preemptive set with different sizes
     }
+    cout << "After elimination : \n";
     for (int i = 0; i < boardSize; i++) {
         for (int j = 0; j < boardSize; j++)
             cout << board[i*boardSize+j] << " ";
