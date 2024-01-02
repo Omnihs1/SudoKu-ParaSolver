@@ -9,7 +9,6 @@
 #include "test.cpp"
 #include "CycleTimer.h"
 #define UPDIV(n, d) (((n)+(d)-1) / (d))
-#define NDEBUG 1
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -44,11 +43,13 @@ int main(int argc, char* argv[]) {
             }
         }
         cout << "\n" << count_one_markup << endl;
+        if(count_one_markup == 0){
 #ifndef NDEBUG
         for(int i=0;i<81;i++)
             cout<<"number of markup in row number "<<i+1<<" is "<<markup[i].size()<<endl;  
 #endif
-        if(count_one_markup == 0){break;}
+            break;
+        }
         // 1. elimination
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
