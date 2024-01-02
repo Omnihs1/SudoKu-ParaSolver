@@ -26,6 +26,7 @@ int main(int argc, char* argv[]) {
             cout << endl;
     }
     bool done = false;
+    double time = CycleTimer::currentSeconds();
     while (!done){
         // 0. initial markup
         vector<int> markup[81]; 
@@ -109,5 +110,6 @@ int main(int argc, char* argv[]) {
         cudaFree(&d_solution);
         cudaFree(&d_board_num);
     }
+    cout << "cudaSudokuSolver takes time: " << CycleTimer::currentSeconds() - time << endl;
     return 0;
 }
