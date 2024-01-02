@@ -6,7 +6,7 @@
 #include <fstream>
 #include <cuda_runtime.h>
 #include "parallelsudoku.cuh"
-
+#include "test.cpp"
 #define UPDIV(n, d) (((n)+(d)-1) / (d))
 using namespace std;
 
@@ -25,51 +25,79 @@ int main(int argc, char* argv[]) {
             cout << endl;
     }
     
-    
-    int *d_new_boards;
-    int *d_old_boards;
-    int *d_solution;
-    int *d_board_num;
+    bool done = false;
+    while (!done){
+        // 0. initial markup
+        vector<int> markup[81]; 
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                for (int k = 0; k < boardSize; k++){
+                    if (noConflicts(board, i, j, k)){
+                        markup[i*boardSize + j].push_back(k);
+                    }
+                }
+            }
+        }
+        // 1. elimination
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                if (markup[i*boardSize + j].size() == 1) {
+                    board[i*boardSize + j] = markup[i*boardSize + j][0];
+                }
+            }
+        }
+        done = checkDone(board);
+        // 2. lone ranger
+        // if(!done){
 
-    int host_solution[boardSize * boardSize];
-    int host_board_num = 1;
-
-    const int memSize = 81 * pow(9, DEPTH);
-
-
-    cudaMalloc(&d_new_boards, memSize * sizeof(int));
-    cudaMalloc(&d_old_boards, memSize * sizeof(int));
-    cudaMalloc(&d_solution, boardSize * boardSize * sizeof(int));
-    cudaMalloc(&d_board_num, sizeof(int));
-
-    cudaMemset(d_new_boards, 0, memSize * sizeof(int));
-    cudaMemset(d_old_boards, 0, memSize * sizeof(int));
-    cudaMemset(d_solution, 0, boardSize * boardSize * sizeof(int));
-    cudaMemset(d_board_num, 0, sizeof(int));
-
-    cudaMemcpy(d_old_boards, board, boardSize * boardSize * sizeof(int), cudaMemcpyHostToDevice);
-
-    BoardGenerator(d_old_boards, d_board_num, d_new_boards);
-    
-    cudaMemcpy(&host_board_num, d_board_num, sizeof(int), cudaMemcpyDeviceToHost);
-    cudaSudokuSolver(d_new_boards, host_board_num, d_solution);
-
-    memset(host_solution, 0, boardSize * boardSize * sizeof(int));
-    cudaMemcpy(host_solution, d_solution, boardSize * boardSize * sizeof(int), cudaMemcpyDeviceToHost);
-
-    // print solution
-    for (int i = 0; i < boardSize; i++) {
-        for (int j = 0; j < boardSize; j++)
-            cout << host_solution[i*boardSize+j] << " ";
-            cout << endl;
+        // }
+        // 3. find preemptive set with different sizes
     }
+    // 4. backtracking
+    if (!done){
+        int *d_new_boards;
+        int *d_old_boards;
+        int *d_solution;
+        int *d_board_num;
 
-    // free device memory
-    cudaFree(&d_new_boards);
-    cudaFree(&d_old_boards);
-    cudaFree(&d_solution);
-    cudaFree(&d_board_num);
+        int host_solution[boardSize * boardSize];
+        int host_board_num = 1;
+
+        const int memSize = 81 * pow(9, DEPTH);
+
+
+        cudaMalloc(&d_new_boards, memSize * sizeof(int));
+        cudaMalloc(&d_old_boards, memSize * sizeof(int));
+        cudaMalloc(&d_solution, boardSize * boardSize * sizeof(int));
+        cudaMalloc(&d_board_num, sizeof(int));
+
+        cudaMemset(d_new_boards, 0, memSize * sizeof(int));
+        cudaMemset(d_old_boards, 0, memSize * sizeof(int));
+        cudaMemset(d_solution, 0, boardSize * boardSize * sizeof(int));
+        cudaMemset(d_board_num, 0, sizeof(int));
+
+        cudaMemcpy(d_old_boards, board, boardSize * boardSize * sizeof(int), cudaMemcpyHostToDevice);
+
+        BoardGenerator(d_old_boards, d_board_num, d_new_boards);
+        
+        cudaMemcpy(&host_board_num, d_board_num, sizeof(int), cudaMemcpyDeviceToHost);
+        cudaSudokuSolver(d_new_boards, host_board_num, d_solution);
+
+        memset(host_solution, 0, boardSize * boardSize * sizeof(int));
+        cudaMemcpy(host_solution, d_solution, boardSize * boardSize * sizeof(int), cudaMemcpyDeviceToHost);
+
+        // print solution
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++)
+                cout << host_solution[i*boardSize+j] << " ";
+                cout << endl;
+        }
+
+        // free device memory
+        cudaFree(&d_new_boards);
+        cudaFree(&d_old_boards);
+        cudaFree(&d_solution);
+        cudaFree(&d_board_num);
+    }
     return 0;
-
-    
 }
