@@ -8,6 +8,7 @@
 #include "parallelsudoku.cuh"
 #include "test.cpp"
 #define UPDIV(n, d) (((n)+(d)-1) / (d))
+#define NDEBUG 1
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -38,8 +39,11 @@ int main(int argc, char* argv[]) {
             }
         }
         // 1. elimination
+#ifndef NDEBUG
         for(int i=0;i<81;i++)
             cout<<"number of markup in row number "<<i+1<<" is "<<markup[i].size()<<endl;  
+#endif
+        
     
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
