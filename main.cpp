@@ -7,6 +7,7 @@
 #include <cuda_runtime.h>
 #include "parallelsudoku.cuh"
 #include "test.cpp"
+#include "CycleTimer.h"
 #define UPDIV(n, d) (((n)+(d)-1) / (d))
 #define NDEBUG 1
 using namespace std;
