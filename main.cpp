@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
                 for (int k = 1; k <= boardSize; k++){
-                    if (noConflictsCPU(board, i, j, k)){
+                    if (noConflictsCPU(board, i, j, k) && board[i*boardSize+j] != 0){
                         markup[i*boardSize + j].push_back(k);
                     }
                 }
