@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
         vector<int> markup[81]; 
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
-                for (int k = 0; k < boardSize; k++){
+                for (int k = 1; k <= boardSize; k++){
                     if (noConflictsCPU(board, i, j, k)){
                         markup[i*boardSize + j].push_back(k);
                     }
