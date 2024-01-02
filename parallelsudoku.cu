@@ -146,6 +146,7 @@ cudaSudokuSolver(int* boards, int board_num, int* solution) {
     cudaMalloc(&finished, sizeof(int));
     cudaMemset(finished, 0, sizeof(int));
     double stime = CycleTimer::currentSeconds();
+    cout << "Block: " << block << ", " << "threadsPerBlock: " << threadsPerBlock << endl;
     SolvingKernel<<<block, threadsPerBlock>>>(boards, board_num, solution, block*threadsPerBlock, finished);
     cudaDeviceSynchronize();
     cout << "cudaSudokuSolver parallel takes time: " << CycleTimer::currentSeconds() - stime << endl;
