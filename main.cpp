@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
     int count_one_markup;
     while (!done){
         // 0. initial markup
-        count_one_markup = 0
+        count_one_markup = 0;
         vector<int> markup[81]; 
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
