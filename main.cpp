@@ -43,8 +43,6 @@ int main(int argc, char* argv[]) {
         for(int i=0;i<81;i++)
             cout<<"number of markup in row number "<<i+1<<" is "<<markup[i].size()<<endl;  
 #endif
-        
-    
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
                 if (markup[i*boardSize + j].size() == 1) {
@@ -53,7 +51,6 @@ int main(int argc, char* argv[]) {
             }
         }
         done = checkDone(board);
-        break;
         // 2. lone ranger
         // if(!done){
 
