@@ -136,7 +136,7 @@ BoardGenerator(int* prev_boards, int* prev_board_num, int* new_boards, int DEPTH
         prev_boards = new_boards;
         new_boards = tmp;
         cudaMemcpy(&num, prev_board_num, sizeof(int), cudaMemcpyDeviceToHost);
-        printf("total boards after an iteration %d: %d, \n", i + 1, num);
+        printf("total boards after an iteration %d: %d \n", i + 1, num);
     }
 }
 

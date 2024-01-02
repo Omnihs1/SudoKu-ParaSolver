@@ -9,6 +9,7 @@
 #include "test.cpp"
 #include "CycleTimer.h"
 #define UPDIV(n, d) (((n)+(d)-1) / (d))
+#define NDEBUG 1
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -65,6 +66,7 @@ int main(int argc, char* argv[]) {
         // }
         // 3. find preemptive set with different sizes
     }
+    cout << "Elimination takes time: " << CycleTimer::currentSeconds() - time << endl;
     cout << "After elimination : \n";
     for (int i = 0; i < boardSize; i++) {
         for (int j = 0; j < boardSize; j++)
