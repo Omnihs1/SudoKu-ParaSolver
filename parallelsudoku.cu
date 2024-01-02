@@ -130,7 +130,7 @@ BoardGenerator(int* prev_boards, int* prev_board_num, int* new_boards, int DEPTH
     for (i = 0; i < DEPTH; i++) {
         int block = UPDIV(num, threadsPerBlock);
         cudaMemset(prev_board_num, 0, sizeof(int));
-        printf("total num after an iteration %d: %d, \n", i + 1, num);
+        // printf("total num after an iteration %d: %d, \n", i + 1, num);
         BoardGenerationKernel<<<block, threadsPerBlock>>>(prev_boards, prev_board_num, num, new_boards, block*threadsPerBlock);
         int* tmp = prev_boards;
         prev_boards = new_boards;

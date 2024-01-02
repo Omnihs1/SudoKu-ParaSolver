@@ -81,14 +81,44 @@ int main(int argc, char* argv[]) {
         int host_solution[boardSize * boardSize];
         int host_board_num = 1;
 
-        for (int DEPTH = 1; DEPTH < 8; DEPTH++){
-            int memSize = 81 * pow(9, DEPTH);
+        int memSize = 81 * pow(9, 7);
+
+        for (int DEPTH = 1; DEPTH < 10; DEPTH++){
+            cout << "MemSize : " << memSize << endl;
             cout << "DEPTH : " << DEPTH << endl;
             cudaMalloc(&d_new_boards, memSize * sizeof(int));
             cudaMalloc(&d_old_boards, memSize * sizeof(int));
             cudaMalloc(&d_solution, boardSize * boardSize * sizeof(int));
             cudaMalloc(&d_board_num, sizeof(int));
 
+            //check allocation memory
+            cudaStatus = cudaMalloc(&d_new_boards, memSize * sizeof(int));
+            if (cudaStatus != cudaSuccess) {
+                cout << "cudaMalloc failed for d_new_boards" << endl;
+                // Handle the memory allocation failure appropriately
+                // e.g., clean up any previously allocated memory, return an error code, etc.
+            }
+            
+            cudaStatus = cudaMalloc(&d_old_boards, memSize * sizeof(int));
+            if (cudaStatus != cudaSuccess) {
+                cout << "cudaMalloc failed for d_old_boards" << endl;
+                // Handle the memory allocation failure appropriately
+                // e.g., clean up any previously allocated memory, return an error code, etc.
+            }
+            
+            cudaStatus = cudaMalloc(&d_solution, boardSize * boardSize * sizeof(int));
+            if (cudaStatus != cudaSuccess) {
+                cout << "cudaMalloc failed for d_solution" << endl;
+                // Handle the memory allocation failure appropriately
+                // e.g., clean up any previously allocated memory, return an error code, etc.
+            }
+            
+            cudaStatus = cudaMalloc(&d_board_num, sizeof(int));
+            if (cudaStatus != cudaSuccess) {
+                cout << "cudaMalloc failed for d_board_num" << endl;
+                // Handle the memory allocation failure appropriately
+                // e.g., clean up any previously allocated memory, return an error code, etc.
+            }
             cudaMemset(d_new_boards, 0, memSize * sizeof(int));
             cudaMemset(d_old_boards, 0, memSize * sizeof(int));
             cudaMemset(d_solution, 0, boardSize * boardSize * sizeof(int));
