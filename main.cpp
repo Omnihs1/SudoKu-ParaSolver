@@ -133,11 +133,15 @@ int main(int argc, char* argv[]) {
 
         cudaMemcpy(d_old_boards, board, boardSize * boardSize * sizeof(int), cudaMemcpyHostToDevice);
 
+
+        double stime = CycleTimer::currentSeconds();
         BoardGenerator(d_old_boards, d_board_num, d_new_boards, DEPTH);
         
         cudaMemcpy(&host_board_num, d_board_num, sizeof(int), cudaMemcpyDeviceToHost);
         cudaSudokuSolver(d_new_boards, host_board_num, d_solution);
 
+        cout << "cudaSudokuSolver parallel takes time: " << CycleTimer::currentSeconds() - stime << endl;
+        
         outputFile << DEPTH << "," << (CycleTimer::currentSeconds() - time) << "\n";
         memset(host_solution, 0, boardSize * boardSize * sizeof(int));
         cudaMemcpy(host_solution, d_solution, boardSize * boardSize * sizeof(int), cudaMemcpyDeviceToHost);
