@@ -43,7 +43,9 @@ int main(int argc, char* argv[]) {
                 count_one_markup += (markup[i*boardSize + j].size() == 1);
             }
         }
-        // cout << "\n" << count_one_markup << endl;
+#ifndef NDEBUG
+        cout << "\n" << count_one_markup << endl;
+#endif
         if(count_one_markup == 0){
 #ifndef NDEBUG
         for(int i=0;i<81;i++)
@@ -62,13 +64,15 @@ int main(int argc, char* argv[]) {
         }
         done = checkDone(board);
     }
-    // cout << "Elimination takes time: " << CycleTimer::currentSeconds() - time << endl;
-    // cout << "After elimination : \n";
-    // for (int i = 0; i < boardSize; i++) {
-    //     for (int j = 0; j < boardSize; j++)
-    //         cout << board[i*boardSize+j] << " ";
-    //         cout << endl;
-    // }
+#ifndef NDEBUG
+    cout << "Elimination takes time: " << CycleTimer::currentSeconds() - time << endl;
+    cout << "After elimination : \n";
+    for (int i = 0; i < boardSize; i++) {
+        for (int j = 0; j < boardSize; j++)
+            cout << board[i*boardSize+j] << " ";
+            cout << endl;
+    }
+#endif
     // 2. backtracking
     if (!done){
         int *d_new_boards;
