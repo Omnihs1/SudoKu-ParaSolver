@@ -143,8 +143,6 @@ BoardGenerator(int* prev_boards, int* prev_board_num, int* new_boards, int DEPTH
 void 
 cudaSudokuSolver(int* boards, int board_num, int* solution) {
     int block = UPDIV(board_num, threadsPerBlock);
-    cout << "Block : " << block << endl;
-    cout << "ThreadsPerBlock : " << threadsPerBlock << endl;
     int *finished;
     cudaMalloc(&finished, sizeof(int));
     cudaMemset(finished, 0, sizeof(int));
