@@ -61,10 +61,6 @@ int main(int argc, char* argv[]) {
             }
         }
         done = checkDone(board);
-        // 2. lone ranger
-        // if(!done){
-        // }
-        // 3. find preemptive set with different sizes
     }
     cout << "Elimination takes time: " << CycleTimer::currentSeconds() - time << endl;
     cout << "After elimination : \n";
@@ -73,7 +69,7 @@ int main(int argc, char* argv[]) {
             cout << board[i*boardSize+j] << " ";
             cout << endl;
     }
-    // 4. backtracking
+    // 2. backtracking
     if (!done){
         int *d_new_boards;
         int *d_old_boards;
@@ -83,73 +79,77 @@ int main(int argc, char* argv[]) {
         int host_solution[boardSize * boardSize];
         int host_board_num = 1;
 
-        int memSize = 81 * pow(9, 7);
+        int DEPTH = 5;
+        int memSize = 81 * pow(9, DEPTH);
+        ofstream outputFile;
 
-        for (int DEPTH = 1; DEPTH < 10; DEPTH++){
-            cout << "MemSize : " << memSize << endl;
-            cout << "DEPTH : " << DEPTH << endl;
-            cudaMalloc(&d_new_boards, memSize * sizeof(int));
-            cudaMalloc(&d_old_boards, memSize * sizeof(int));
-            cudaMalloc(&d_solution, boardSize * boardSize * sizeof(int));
-            cudaMalloc(&d_board_num, sizeof(int));
+        
+        cout << "MemSize : " << memSize << endl;
+        cout << "DEPTH : " << DEPTH << endl;
 
-            //check allocation memory
-            cudaError_t cudaStatus;
-            cudaStatus = cudaMalloc(&d_new_boards, memSize * sizeof(int));
-            if (cudaStatus != cudaSuccess) {
-                cout << "cudaMalloc failed for d_new_boards" << endl;
-                // Handle the memory allocation failure appropriately
-                // e.g., clean up any previously allocated memory, return an error code, etc.
-            }
-            
-            cudaStatus = cudaMalloc(&d_old_boards, memSize * sizeof(int));
-            if (cudaStatus != cudaSuccess) {
-                cout << "cudaMalloc failed for d_old_boards" << endl;
-                // Handle the memory allocation failure appropriately
-                // e.g., clean up any previously allocated memory, return an error code, etc.
-            }
-            
-            cudaStatus = cudaMalloc(&d_solution, boardSize * boardSize * sizeof(int));
-            if (cudaStatus != cudaSuccess) {
-                cout << "cudaMalloc failed for d_solution" << endl;
-                // Handle the memory allocation failure appropriately
-                // e.g., clean up any previously allocated memory, return an error code, etc.
-            }
-            
-            cudaStatus = cudaMalloc(&d_board_num, sizeof(int));
-            if (cudaStatus != cudaSuccess) {
-                cout << "cudaMalloc failed for d_board_num" << endl;
-                // Handle the memory allocation failure appropriately
-                // e.g., clean up any previously allocated memory, return an error code, etc.
-            }
-            cudaMemset(d_new_boards, 0, memSize * sizeof(int));
-            cudaMemset(d_old_boards, 0, memSize * sizeof(int));
-            cudaMemset(d_solution, 0, boardSize * boardSize * sizeof(int));
-            cudaMemset(d_board_num, 0, sizeof(int));
+        outputFile.open("outputTime.csv");
+        
+        cudaMalloc(&d_new_boards, memSize * sizeof(int));
+        cudaMalloc(&d_old_boards, memSize * sizeof(int));
+        cudaMalloc(&d_solution, boardSize * boardSize * sizeof(int));
+        cudaMalloc(&d_board_num, sizeof(int));
 
-            cudaMemcpy(d_old_boards, board, boardSize * boardSize * sizeof(int), cudaMemcpyHostToDevice);
+        //check allocation memory
+        cudaError_t cudaStatus;
+        cudaStatus = cudaMalloc(&d_new_boards, memSize * sizeof(int));
+        if (cudaStatus != cudaSuccess) {
+            cout << "cudaMalloc failed for d_new_boards" << endl;
+            // Handle the memory allocation failure appropriately
+            // e.g., clean up any previously allocated memory, return an error code, etc.
+        }
+        
+        cudaStatus = cudaMalloc(&d_old_boards, memSize * sizeof(int));
+        if (cudaStatus != cudaSuccess) {
+            cout << "cudaMalloc failed for d_old_boards" << endl;
+            // Handle the memory allocation failure appropriately
+            // e.g., clean up any previously allocated memory, return an error code, etc.
+        }
+        
+        cudaStatus = cudaMalloc(&d_solution, boardSize * boardSize * sizeof(int));
+        if (cudaStatus != cudaSuccess) {
+            cout << "cudaMalloc failed for d_solution" << endl;
+            // Handle the memory allocation failure appropriately
+            // e.g., clean up any previously allocated memory, return an error code, etc.
+        }
+        
+        cudaStatus = cudaMalloc(&d_board_num, sizeof(int));
+        if (cudaStatus != cudaSuccess) {
+            cout << "cudaMalloc failed for d_board_num" << endl;
+            // Handle the memory allocation failure appropriately
+            // e.g., clean up any previously allocated memory, return an error code, etc.
+        }
+        cudaMemset(d_new_boards, 0, memSize * sizeof(int));
+        cudaMemset(d_old_boards, 0, memSize * sizeof(int));
+        cudaMemset(d_solution, 0, boardSize * boardSize * sizeof(int));
+        cudaMemset(d_board_num, 0, sizeof(int));
 
-            BoardGenerator(d_old_boards, d_board_num, d_new_boards, DEPTH);
-            
-            cudaMemcpy(&host_board_num, d_board_num, sizeof(int), cudaMemcpyDeviceToHost);
-            cudaSudokuSolver(d_new_boards, host_board_num, d_solution);
+        cudaMemcpy(d_old_boards, board, boardSize * boardSize * sizeof(int), cudaMemcpyHostToDevice);
 
-            memset(host_solution, 0, boardSize * boardSize * sizeof(int));
-            cudaMemcpy(host_solution, d_solution, boardSize * boardSize * sizeof(int), cudaMemcpyDeviceToHost);
+        BoardGenerator(d_old_boards, d_board_num, d_new_boards, DEPTH);
+        
+        cudaMemcpy(&host_board_num, d_board_num, sizeof(int), cudaMemcpyDeviceToHost);
+        cudaSudokuSolver(d_new_boards, host_board_num, d_solution);
 
-            // print solution
-            for (int i = 0; i < boardSize; i++) {
-                for (int j = 0; j < boardSize; j++)
-                    cout << host_solution[i*boardSize+j] << " ";
-                    cout << endl;
-            }
+        outputFile << DEPTH << "," << (CycleTimer::currentSeconds() - time) << "\n";
+        memset(host_solution, 0, boardSize * boardSize * sizeof(int));
+        cudaMemcpy(host_solution, d_solution, boardSize * boardSize * sizeof(int), cudaMemcpyDeviceToHost);
 
-            // free device memory
-            cudaFree(&d_new_boards);
-            cudaFree(&d_old_boards);
-            cudaFree(&d_solution);
-            cudaFree(&d_board_num);
-        } 
+        // print solution
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++)
+                cout << host_solution[i*boardSize+j] << " ";
+                cout << endl;
+        }
+        // free device memory
+        cudaFree(&d_new_boards);
+        cudaFree(&d_old_boards);
+        cudaFree(&d_solution);
+        cudaFree(&d_board_num);
     }
     cout << "cudaSudokuSolver takes time: " << CycleTimer::currentSeconds() - time << endl;
     return 0;
