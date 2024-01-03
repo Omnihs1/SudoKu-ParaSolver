@@ -6,7 +6,7 @@
 #include "parallelsudoku.cuh"
 #include "CycleTimer.h"
 #define UPDIV(n, d) (((n)+(d)-1)/(d))
-const int threadsPerBlock = 512;
+// const int threadsPerBlock = 512;
 
 // function to examine if there are conflicts or not if cell [row][col] is num
 __device__
@@ -124,11 +124,11 @@ void BoardGenerationKernel(int* prev_boards, int* board_num, int prev_board_num,
 }
 
 void 
-BoardGenerator(int* prev_boards, int* prev_board_num, int* new_boards, int DEPTH) {
+BoardGenerator(int block, int threadsPerBlock, int int* prev_boards, int* prev_board_num, int* new_boards, int DEPTH) {
     int i;
     int num = 1;
     for (i = 0; i < DEPTH; i++) {
-        int block = UPDIV(num, threadsPerBlock);
+        // int block = UPDIV(num, threadsPerBlock);
         cudaMemset(prev_board_num, 0, sizeof(int));
         // printf("total num after an iteration %d: %d, \n", i + 1, num);
         BoardGenerationKernel<<<block, threadsPerBlock>>>(prev_boards, prev_board_num, num, new_boards, block*threadsPerBlock);
