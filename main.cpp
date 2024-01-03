@@ -79,19 +79,12 @@ int main(int argc, char* argv[]) {
         int host_solution[boardSize * boardSize];
         int host_board_num = 1;
 
-        int blocks;
-        int threadsPerBlock;
-
         int DEPTH = 5;
         int memSize = 81 * pow(9, DEPTH);
-        blocks = 2;
-        threadsPerBlock = 512;
         ofstream outputFile;
 
         cout << "MemSize : " << memSize << endl;
         cout << "DEPTH : " << DEPTH << endl;
-        cout << "Block : " << blocks << endl;
-        cout << "ThreadsPerBlock : " << threadsPerBlock << endl;
 
         outputFile.open("outputTime.csv");
         
@@ -136,10 +129,10 @@ int main(int argc, char* argv[]) {
 
         cudaMemcpy(d_old_boards, board, boardSize * boardSize * sizeof(int), cudaMemcpyHostToDevice);
 
-        BoardGenerator(blocks, threadsPerBlock, d_old_boards, d_board_num, d_new_boards, DEPTH);
+        BoardGenerator(d_old_boards, d_board_num, d_new_boards, DEPTH);
         
         cudaMemcpy(&host_board_num, d_board_num, sizeof(int), cudaMemcpyDeviceToHost);
-        cudaSudokuSolver(blocks, threadsPerBlock, d_new_boards, host_board_num, d_solution);
+        cudaSudokuSolver(d_new_boards, host_board_num, d_solution);
 
         outputFile << DEPTH << "," << (CycleTimer::currentSeconds() - time) << "\n";
         memset(host_solution, 0, boardSize * boardSize * sizeof(int));
