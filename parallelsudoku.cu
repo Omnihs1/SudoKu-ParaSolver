@@ -120,7 +120,7 @@ void BoardGenerationKernel(int* prev_boards, int* board_num, int prev_board_num,
             }
         }
     }
-
+    
 }
 
 void 

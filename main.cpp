@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
     while (!done){
         // 0. initial markup
         count_one_markup = 0;
-        vector<int> markup[81]; 
+        vector<int> markup[boardSize*boardSize]; 
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
                 for (int k = 1; k <= boardSize; k++){
@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
         int host_board_num = 1;
 
         int DEPTH = 5;
-        int memSize = 81 * pow(9, DEPTH);
+        int memSize = pow(2, 26);
         ofstream outputFile;
 
         cout << "MemSize : " << memSize << endl;
