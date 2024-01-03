@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
         int blocks;
         int threadsPerBlock;
 
-        int DEPTH;
+        int DEPTH = 5;
         int memSize = 81 * pow(9, DEPTH);
         blocks = 2;
         threadsPerBlock = 512;
@@ -90,6 +90,8 @@ int main(int argc, char* argv[]) {
 
         cout << "MemSize : " << memSize << endl;
         cout << "DEPTH : " << DEPTH << endl;
+        cout << "Block : " << blocks << endl;
+        cout << "ThreadsPerBlock : " << threadsPerBlock << endl;
 
         outputFile.open("outputTime.csv");
         
