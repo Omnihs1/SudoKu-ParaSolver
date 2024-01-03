@@ -124,7 +124,7 @@ void BoardGenerationKernel(int* prev_boards, int* board_num, int prev_board_num,
 }
 
 void 
-BoardGenerator(int block, int threadsPerBlock, int int* prev_boards, int* prev_board_num, int* new_boards, int DEPTH) {
+BoardGenerator(int block, int threadsPerBlock, int* prev_boards, int* prev_board_num, int* new_boards, int DEPTH) {
     int i;
     int num = 1;
     for (i = 0; i < DEPTH; i++) {
@@ -141,8 +141,8 @@ BoardGenerator(int block, int threadsPerBlock, int int* prev_boards, int* prev_b
 }
 
 void 
-cudaSudokuSolver(int* boards, int board_num, int* solution) {
-    int block = UPDIV(board_num, threadsPerBlock);
+cudaSudokuSolver(int block, int threadsPerBlock, int* boards, int board_num, int* solution) {
+    // int block = UPDIV(board_num, threadsPerBlock);
     int *finished;
     cudaMalloc(&finished, sizeof(int));
     cudaMemset(finished, 0, sizeof(int));
