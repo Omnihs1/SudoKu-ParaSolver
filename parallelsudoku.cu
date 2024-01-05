@@ -155,12 +155,12 @@ cudaSudokuSolver(int* boards, int board_num, int* solution) {
     cudaMalloc(&finished, sizeof(int));
     cudaMemset(finished, 0, sizeof(int));
     cout << "Block: " << block << ", " << "threadsPerBlock: " << threadsPerBlock << endl;
-    for(int i = 0; i < board_num; i++) {
-        for(int j = 0; j < 81; j++) {
-            printf("%d ", boards[i*81+j]);
-        }
-        printf("\n");
-    }
+    // for(int i = 0; i < board_num; i++) {
+    //     for(int j = 0; j < 81; j++) {
+    //         printf("%d ", boards[i*81+j]);
+    //     }
+    //     printf("\n");
+    // }
     SolvingKernel<<<block, threadsPerBlock>>>(boards, board_num, solution, block*threadsPerBlock, finished);
     cudaDeviceSynchronize();
 }
