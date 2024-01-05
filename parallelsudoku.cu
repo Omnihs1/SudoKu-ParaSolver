@@ -157,7 +157,7 @@ cudaSudokuSolver(int* boards, int board_num, int* solution) {
     cout << "Block: " << block << ", " << "threadsPerBlock: " << threadsPerBlock << endl;
     for(int i = 0; i < board_num; i++) {
         for(int j = 0; j < 81; j++) {
-            printf("%d ", *boards[i][j]);
+            printf("%d ", boards[i*81+j]);
         }
         printf("\n");
     }
