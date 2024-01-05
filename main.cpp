@@ -24,9 +24,10 @@ int main(int argc, char* argv[]) {
     }
     // print board
     for(int i = 0; i < boardSize; i++) {
-        for(int j = 0; j < boardSize; j++)
-            cout << board[i*boardSize+j] << " ";
-            cout << endl;
+        for(int j = 0; j < boardSize; j++){
+          cout << board[i*boardSize+j] << " ";
+        }
+          cout << endl;
     }
     bool done = false;
     double time = CycleTimer::currentSeconds();
@@ -85,7 +86,7 @@ int main(int argc, char* argv[]) {
         int host_solution[boardSize * boardSize];
         int host_board_num = 1;
 
-        int DEPTH = stoi(argv[2]);
+        int DEPTH = std::stoi(argv[2]);
         int memSize = pow(2, 26);
         ofstream outputFile;
 
@@ -149,9 +150,10 @@ int main(int argc, char* argv[]) {
 
         // print solution
         for(int i = 0; i < boardSize; i++) {
-            for(int j = 0; j < boardSize; j++)
-                cout << host_solution[i*boardSize+j] << " ";
-                cout << endl;
+            for(int j = 0; j < boardSize; j++){
+              cout << host_solution[i*boardSize+j] << " ";
+            }
+              cout << endl;
         }
         // free device memory
         cudaFree(&d_new_boards);
