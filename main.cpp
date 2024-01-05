@@ -86,7 +86,8 @@ int main(int argc, char* argv[]) {
         int host_solution[boardSize * boardSize];
         int host_board_num = 1;
 
-        int DEPTH = std::stoi(argv[2]);
+        int DEPTH = atoi(argv[2]);
+
         int memSize = pow(2, 26);
         ofstream outputFile;
 
