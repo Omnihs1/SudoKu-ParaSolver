@@ -55,55 +55,50 @@ int findNextEmptyCellIndex(int matrix[boardSize*boardSize], int start) {
 // each thread works on a board in the boards array
 __global__
 void SolvingKernel(int* boards, int boardCnt, int* solution, int numThreads, int *finished) {
-    if(*finished == 1){
-      ;
-    }
-    else {
-      int tidx = blockIdx.x * blockDim.x + threadIdx.x;
-      // printf("\n");
-      int localBoard[boardSize*boardSize];
-      for (int idx = tidx; (idx < boardCnt) && (*finished == 0); idx += numThreads) {
-          int emptyCnt = 0;
-          int emptyIndex[boardSize*boardSize];
-          int start = idx * boardSize * boardSize;
-          for (int i = start; i < (idx+1) * boardSize * boardSize; i++) {
-              // if (idx == 32){
-              //   // printf("%d \n", idx);
-              //   printf("%d ", boards[i]);
-              // }
-              // if(idx == 35){
-              //   // printf("%d \n", idx);
-              //   printf("%d ", boards[i]);
-              // }
-              localBoard[i-start] = boards[i];
-              if (!localBoard[i-start]) {
-                  emptyIndex[emptyCnt] = i-start;
-                  emptyCnt++;
-              }
-          }
-          printf("\n%d, %d\n", idx, emptyCnt);
-          // backtracking algorithm
-          int depth = 0;
-          while (depth >= 0 && depth < emptyCnt) {
-              int next = emptyIndex[depth];
-              int row = next / boardSize;
-              int col = next % boardSize;
-              localBoard[next]++;
-              if (noConflicts(localBoard, row, col, localBoard[next])) depth++;
-              else if (localBoard[next] >= boardSize) {
-                  localBoard[next] = 0;
-                  depth--;
-              }
-          }
-          if (depth == emptyCnt) {
-              // solved board found 
-              *finished = 1;
-              // copy board to output
-              printf("\n%d\n", idx);
-              memcpy(solution, localBoard, boardSize*boardSize*sizeof(int));
-              break;
-          }
-      }
+    int tidx = blockIdx.x * blockDim.x + threadIdx.x;
+    // printf("\n");
+    int localBoard[boardSize*boardSize];
+    for (int idx = tidx; (idx < boardCnt) && (*finished == 0); idx += numThreads) {
+        int emptyCnt = 0;
+        int emptyIndex[boardSize*boardSize];
+        int start = idx * boardSize * boardSize;
+        for (int i = start; i < (idx+1) * boardSize * boardSize; i++) {
+            // if (idx == 32){
+            //   // printf("%d \n", idx);
+            //   printf("%d ", boards[i]);
+            // }
+            // if(idx == 35){
+            //   // printf("%d \n", idx);
+            //   printf("%d ", boards[i]);
+            // }
+            localBoard[i-start] = boards[i];
+            if (!localBoard[i-start]) {
+                emptyIndex[emptyCnt] = i-start;
+                emptyCnt++;
+            }
+        }
+        printf("\n%d, %d\n", idx, emptyCnt);
+        // backtracking algorithm
+        int depth = 0;
+        while (depth >= 0 && depth < emptyCnt) {
+            int next = emptyIndex[depth];
+            int row = next / boardSize;
+            int col = next % boardSize;
+            localBoard[next]++;
+            if (noConflicts(localBoard, row, col, localBoard[next])) depth++;
+            else if (localBoard[next] >= boardSize) {
+                localBoard[next] = 0;
+                depth--;
+            }
+        }
+        if (depth == emptyCnt) {
+            // solved board found 
+            *finished = 1;
+            // copy board to output
+            printf("\n%d\n", idx);
+            memcpy(solution, localBoard, boardSize*boardSize*sizeof(int));
+            break;
+        }
     }
 }
 
