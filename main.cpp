@@ -79,7 +79,6 @@ int main(int argc, char* argv[]) {
     // 2. backtracking
     if (!done){
         int *d_new_boards;
-        int *d_old_boards;
         int *d_solution;
         int *d_board_num;
 
@@ -97,7 +96,6 @@ int main(int argc, char* argv[]) {
         outputFile.open("outputTime.csv");
         
         // cudaMalloc(&d_new_boards, memSize * sizeof(int));
-        // cudaMalloc(&d_old_boards, memSize * sizeof(int));
         // cudaMalloc(&d_solution, boardSize * boardSize * sizeof(int));
         // cudaMalloc(&d_board_num, sizeof(int));
 
@@ -106,13 +104,6 @@ int main(int argc, char* argv[]) {
         cudaStatus = cudaMalloc(&d_new_boards, memSize * sizeof(int));
         if (cudaStatus != cudaSuccess) {
             cout << "cudaMalloc failed for d_new_boards" << endl;
-            // Handle the memory allocation failure appropriately
-            // e.g., clean up any previously allocated memory, return an error code, etc.
-        }
-        
-        cudaStatus = cudaMalloc(&d_old_boards, memSize * sizeof(int));
-        if (cudaStatus != cudaSuccess) {
-            cout << "cudaMalloc failed for d_old_boards" << endl;
             // Handle the memory allocation failure appropriately
             // e.g., clean up any previously allocated memory, return an error code, etc.
         }
@@ -131,14 +122,13 @@ int main(int argc, char* argv[]) {
             // e.g., clean up any previously allocated memory, return an error code, etc.
         }
         cudaMemset(d_new_boards, 0, memSize * sizeof(int));
-        cudaMemset(d_old_boards, 0, memSize * sizeof(int));
         cudaMemset(d_solution, 0, boardSize * boardSize * sizeof(int));
         cudaMemset(d_board_num, 0, sizeof(int));
 
-        cudaMemcpy(d_old_boards, board, boardSize * boardSize * sizeof(int), cudaMemcpyHostToDevice);
+        cudaMemcpy(d_new_boards, board, boardSize * boardSize * sizeof(int), cudaMemcpyHostToDevice);
 
         double stime = CycleTimer::currentSeconds();
-        BoardGenerator(d_old_boards, d_board_num, d_new_boards, DEPTH);
+        BoardGenerator(d_board_num, d_new_boards, DEPTH);
         
         cudaMemcpy(&host_board_num, d_board_num, sizeof(int), cudaMemcpyDeviceToHost);
         cudaSudokuSolver(d_new_boards, host_board_num, d_solution);

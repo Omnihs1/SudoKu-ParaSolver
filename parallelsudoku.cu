@@ -55,41 +55,56 @@ int findNextEmptyCellIndex(int matrix[boardSize*boardSize], int start) {
 // each thread works on a board in the boards array
 __global__
 void SolvingKernel(int* boards, int boardCnt, int* solution, int numThreads, int *finished) {
-    int tidx = blockIdx.x * blockDim.x + threadIdx.x;
-
-    int localBoard[boardSize*boardSize];
-    for (int idx = tidx; (idx < boardCnt) && (*finished == 0); idx += numThreads) {
-        int emptyCnt = 0;
-        int emptyIndex[boardSize*boardSize];
-        int start = idx * boardSize * boardSize;
-        for (int i = start; i < (idx+1) * boardSize * boardSize; i++) {
-            localBoard[i-start] = boards[i];
-            if (!localBoard[i-start]) {
-                emptyIndex[emptyCnt++] = i-start;
-            }
-        }
-        // backtracking algorithm
-        int depth = 0;
-        while (depth >= 0 && depth < emptyCnt) {
-            int next = emptyIndex[depth];
-            int row = next / boardSize;
-            int col = next % boardSize;
-            localBoard[next]++;
-            if (noConflicts(localBoard, row, col, localBoard[next])) depth++;
-            else if (localBoard[next] >= boardSize) {
-                localBoard[next] = 0;
-                depth--;
-            }
-        }
-        if (depth == emptyCnt) {
-            // solved board found 
-            *finished = 1;
-            // copy board to output
-            memcpy(solution, localBoard, boardSize*boardSize*sizeof(int));
-            break;
-        }
+    if(*finished == 1){
+      ;
     }
-    
+    else {
+      int tidx = blockIdx.x * blockDim.x + threadIdx.x;
+      // printf("\n");
+      int localBoard[boardSize*boardSize];
+      for (int idx = tidx; (idx < boardCnt) && (*finished == 0); idx += numThreads) {
+          int emptyCnt = 0;
+          int emptyIndex[boardSize*boardSize];
+          int start = idx * boardSize * boardSize;
+          for (int i = start; i < (idx+1) * boardSize * boardSize; i++) {
+              // if (idx == 32){
+              //   // printf("%d \n", idx);
+              //   printf("%d ", boards[i]);
+              // }
+              // if(idx == 35){
+              //   // printf("%d \n", idx);
+              //   printf("%d ", boards[i]);
+              // }
+              localBoard[i-start] = boards[i];
+              if (!localBoard[i-start]) {
+                  emptyIndex[emptyCnt] = i-start;
+                  emptyCnt++;
+              }
+          }
+          printf("\n%d, %d\n", idx, emptyCnt);
+          // backtracking algorithm
+          int depth = 0;
+          while (depth >= 0 && depth < emptyCnt) {
+              int next = emptyIndex[depth];
+              int row = next / boardSize;
+              int col = next % boardSize;
+              localBoard[next]++;
+              if (noConflicts(localBoard, row, col, localBoard[next])) depth++;
+              else if (localBoard[next] >= boardSize) {
+                  localBoard[next] = 0;
+                  depth--;
+              }
+          }
+          if (depth == emptyCnt) {
+              // solved board found 
+              *finished = 1;
+              // copy board to output
+              printf("\n%d\n", idx);
+              memcpy(solution, localBoard, boardSize*boardSize*sizeof(int));
+              break;
+          }
+      }
+    }
 }
 
 
@@ -97,7 +112,7 @@ void SolvingKernel(int* boards, int boardCnt, int* solution, int numThreads, int
 // kernel that generates new boards from previous ones
 // call this kernel multiple times to have 
 __global__
-void BoardGenerationKernel(int* prev_boards, int* board_num, int prev_board_num, int* new_boards, int numThreads) {
+void BoardGenerationKernel(int* board_num, int prev_board_num, int* new_boards, int numThreads) {
     int tidx = blockIdx.x * blockDim.x + threadIdx.x;
     
     int* localBoard = (int*) malloc(sizeof(int)*boardSize*boardSize);
@@ -106,7 +121,7 @@ void BoardGenerationKernel(int* prev_boards, int* board_num, int prev_board_num,
     for (int idx = tidx; idx < prev_board_num; idx+=numThreads) {
         int start = idx * boardSize * boardSize;
         for (int i = start; i < (idx+1) * boardSize * boardSize; i++) {
-            localBoard[i-start] = prev_boards[i];
+            localBoard[i-start] = new_boards[i];
         }
         int emptyIdx = findNextEmptyCellIndex(localBoard, 0);
         if (emptyIdx == boardSize*boardSize)  return;
@@ -120,21 +135,19 @@ void BoardGenerationKernel(int* prev_boards, int* board_num, int prev_board_num,
             }
         }
     }
-
 }
 
 void 
-BoardGenerator(int* prev_boards, int* prev_board_num, int* new_boards, int DEPTH) {
+BoardGenerator(int* prev_board_num, int* new_boards, int DEPTH) {
     int i;
     int num = 1;
     for (i = 0; i < DEPTH; i++) {
         int block = UPDIV(num, threadsPerBlock);
         cudaMemset(prev_board_num, 0, sizeof(int));
-        // printf("total num after an iteration %d: %d, \n", i + 1, num);
-        BoardGenerationKernel<<<block, threadsPerBlock>>>(prev_boards, prev_board_num, num, new_boards, block*threadsPerBlock);
-        int* tmp = prev_boards;
-        prev_boards = new_boards;
-        new_boards = tmp;
+        BoardGenerationKernel<<<block, threadsPerBlock>>>(prev_board_num, num, new_boards, block*threadsPerBlock);
+        // int* tmp = prev_boards;
+        // prev_boards = new_boards;
+        // new_boards = tmp;
         cudaMemcpy(&num, prev_board_num, sizeof(int), cudaMemcpyDeviceToHost);
         printf("total boards after an iteration %d: %d \n", i + 1, num);
     }
