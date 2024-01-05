@@ -2,6 +2,7 @@
 #include <cmath>
 #include <vector>
 #include <cstring>
+#include <string>
 #include <iostream>
 #include <fstream>
 #include <cuda_runtime.h>
@@ -17,13 +18,13 @@ int main(int argc, char* argv[]) {
     int board[boardSize * boardSize];
     cout << "You entered: " << argv[1] << " and depth : " << argv[2] << std::endl;
     ifstream myFile (argv[1]);
-    for (int i = 0; i < boardSize; i++) {
-        for (int j = 0; j < boardSize; j++) 
+    for(int i = 0; i < boardSize; i++) {
+        for(int j = 0; j < boardSize; j++) 
             myFile >> board[i*boardSize + j];
     }
     // print board
-    for (int i = 0; i < boardSize; i++) {
-        for (int j = 0; j < boardSize; j++)
+    for(int i = 0; i < boardSize; i++) {
+        for(int j = 0; j < boardSize; j++)
             cout << board[i*boardSize+j] << " ";
             cout << endl;
     }
@@ -34,9 +35,9 @@ int main(int argc, char* argv[]) {
         // 0. initial markup
         count_one_markup = 0;
         vector<int> markup[boardSize*boardSize]; 
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
-                for (int k = 1; k <= boardSize; k++){
+        for(int i = 0; i < boardSize; i++) {
+            for(int j = 0; j < boardSize; j++) {
+                for(int k = 1; k <= boardSize; k++){
                     if (noConflictsCPU(board, i, j, k) && board[i*boardSize+j] == 0){
                         markup[i*boardSize + j].push_back(k);
                     }
@@ -55,8 +56,8 @@ int main(int argc, char* argv[]) {
             break;
         }
         // 1. elimination
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
+        for(int i = 0; i < boardSize; i++) {
+            for(int j = 0; j < boardSize; j++) {
                 if (markup[i*boardSize + j].size() == 1) {
                     board[i*boardSize + j] = markup[i*boardSize + j][0];
                     markup[i*boardSize + j].clear();
@@ -84,7 +85,7 @@ int main(int argc, char* argv[]) {
         int host_solution[boardSize * boardSize];
         int host_board_num = 1;
 
-        int DEPTH = argv[2];
+        int DEPTH = stoi(argv[2]);
         int memSize = pow(2, 26);
         ofstream outputFile;
 
@@ -147,8 +148,8 @@ int main(int argc, char* argv[]) {
         cudaMemcpy(host_solution, d_solution, boardSize * boardSize * sizeof(int), cudaMemcpyDeviceToHost);
 
         // print solution
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++)
+        for(int i = 0; i < boardSize; i++) {
+            for(int j = 0; j < boardSize; j++)
                 cout << host_solution[i*boardSize+j] << " ";
                 cout << endl;
         }
