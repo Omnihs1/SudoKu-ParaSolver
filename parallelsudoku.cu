@@ -140,9 +140,6 @@ BoardGenerator(int* prev_board_num, int* new_boards, int DEPTH) {
         int block = UPDIV(num, threadsPerBlock);
         cudaMemset(prev_board_num, 0, sizeof(int));
         BoardGenerationKernel<<<block, threadsPerBlock>>>(prev_board_num, num, new_boards, block*threadsPerBlock);
-        // int* tmp = prev_boards;
-        // prev_boards = new_boards;
-        // new_boards = tmp;
         cudaMemcpy(&num, prev_board_num, sizeof(int), cudaMemcpyDeviceToHost);
         printf("total boards after an iteration %d: %d \n", i + 1, num);
     }
@@ -155,12 +152,6 @@ cudaSudokuSolver(int* boards, int board_num, int* solution) {
     cudaMalloc(&finished, sizeof(int));
     cudaMemset(finished, 0, sizeof(int));
     cout << "Block: " << block << ", " << "threadsPerBlock: " << threadsPerBlock << endl;
-    // for(int i = 0; i < board_num; i++) {
-    //     for(int j = 0; j < 81; j++) {
-    //         printf("%d ", boards[i*81+j]);
-    //     }
-    //     printf("\n");
-    // }
     SolvingKernel<<<block, threadsPerBlock>>>(boards, board_num, solution, block*threadsPerBlock, finished);
     cudaDeviceSynchronize();
 }
