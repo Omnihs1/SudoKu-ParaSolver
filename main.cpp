@@ -148,7 +148,7 @@ int main(int argc, char* argv[]) {
         }
         // free device memory
         cudaFree(&d_new_boards);
-        cudaFree(&d_old_boards);
+        // cudaFree(&d_old_boards);
         cudaFree(&d_solution);
         cudaFree(&d_board_num);
     }
