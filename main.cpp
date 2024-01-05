@@ -15,7 +15,8 @@ using namespace std;
 int main(int argc, char* argv[]) {
     // read sudoku board from file
     int board[boardSize * boardSize];
-    ifstream myFile ("sudoku.txt");
+    cout << "You entered: " << argv[1] << " and depth : " << argv[2] << std::endl;
+    ifstream myFile (argv[1]);
     for (int i = 0; i < boardSize; i++) {
         for (int j = 0; j < boardSize; j++) 
             myFile >> board[i*boardSize + j];
@@ -42,7 +43,7 @@ int main(int argc, char* argv[]) {
                 }
                 count_one_markup += (markup[i*boardSize + j].size() == 1);
             }
-        }
+    }
 #ifndef NDEBUG
         cout << "\n" << count_one_markup << endl;
 #endif
@@ -83,7 +84,7 @@ int main(int argc, char* argv[]) {
         int host_solution[boardSize * boardSize];
         int host_board_num = 1;
 
-        int DEPTH = 5;
+        int DEPTH = argv[2];
         int memSize = pow(2, 26);
         ofstream outputFile;
 
@@ -92,10 +93,10 @@ int main(int argc, char* argv[]) {
 
         outputFile.open("outputTime.csv");
         
-        cudaMalloc(&d_new_boards, memSize * sizeof(int));
-        cudaMalloc(&d_old_boards, memSize * sizeof(int));
-        cudaMalloc(&d_solution, boardSize * boardSize * sizeof(int));
-        cudaMalloc(&d_board_num, sizeof(int));
+        // cudaMalloc(&d_new_boards, memSize * sizeof(int));
+        // cudaMalloc(&d_old_boards, memSize * sizeof(int));
+        // cudaMalloc(&d_solution, boardSize * boardSize * sizeof(int));
+        // cudaMalloc(&d_board_num, sizeof(int));
 
         //check allocation memory
         cudaError_t cudaStatus;
@@ -132,7 +133,6 @@ int main(int argc, char* argv[]) {
         cudaMemset(d_board_num, 0, sizeof(int));
 
         cudaMemcpy(d_old_boards, board, boardSize * boardSize * sizeof(int), cudaMemcpyHostToDevice);
-
 
         double stime = CycleTimer::currentSeconds();
         BoardGenerator(d_old_boards, d_board_num, d_new_boards, DEPTH);
