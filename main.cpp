@@ -143,7 +143,7 @@ int main(int argc, char* argv[]) {
         // print solution
         int twoDArray[9][9];
         convertTo2DArray(host_solution, twoDArray);
-        printSudoku(host_solution);
+        printSudoku(twoDArray);
         // for(int i = 0; i < boardSize; i++) {
         //     for(int j = 0; j < boardSize; j++){
         //       cout << host_solution[i*boardSize+j] << " ";
