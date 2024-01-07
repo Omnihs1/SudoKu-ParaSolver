@@ -6,6 +6,7 @@
 #include "parallelsudoku.cuh"
 #include "CycleTimer.h"
 #define UPDIV(n, d) (((n)+(d)-1)/(d))
+#define NDEBUG 1
 const int threadsPerBlock = 512;
 
 // function to examine if there are conflicts or not if cell [row][col] is num
@@ -77,7 +78,9 @@ void SolvingKernel(int* boards, int boardCnt, int* solution, int numThreads, int
                 emptyCnt++;
             }
         }
+#ifndef NDEBUG
         printf("\n%d, %d\n", idx, emptyCnt);
+#endif
         // backtracking algorithm
         int depth = 0;
         while (depth >= 0 && depth < emptyCnt) {
