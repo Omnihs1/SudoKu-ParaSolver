@@ -126,7 +126,11 @@ void BoardGenerationKernel(int* board_num, int prev_board_num, int* new_boards, 
                 int offset = atomicAdd(board_num, 1);
                 for (int ii = 0; ii < boardSize*boardSize; ii++) {
                     new_boards[boardSize*boardSize*offset+ii] = localBoard[ii];
+                    __syncthreads();
                 }
+            }
+            else{
+                localBoard[emptyIdx] = 0;
             }
         }
     }
