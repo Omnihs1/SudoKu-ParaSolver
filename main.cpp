@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <cuda_runtime.h>
+#include "SudokuBoard.cpp"
 #include "parallelsudoku.cuh"
 #include "test.cpp"
 #include "CycleTimer.h"
@@ -140,12 +141,15 @@ int main(int argc, char* argv[]) {
         cudaMemcpy(host_solution, d_solution, boardSize * boardSize * sizeof(int), cudaMemcpyDeviceToHost);
 
         // print solution
-        for(int i = 0; i < boardSize; i++) {
-            for(int j = 0; j < boardSize; j++){
-              cout << host_solution[i*boardSize+j] << " ";
-            }
-              cout << endl;
-        }
+        int twoDArray[9][9];
+        convertTo2DArray(host_solution, twoDArray);
+        printSudoku(host_solution);
+        // for(int i = 0; i < boardSize; i++) {
+        //     for(int j = 0; j < boardSize; j++){
+        //       cout << host_solution[i*boardSize+j] << " ";
+        //     }
+        //       cout << endl;
+        // }
         // free device memory
         cudaFree(&d_new_boards);
         // cudaFree(&d_old_boards);
