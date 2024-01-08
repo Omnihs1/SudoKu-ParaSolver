@@ -157,6 +157,6 @@ int main(int argc, char* argv[]) {
         cudaFree(&d_solution);
         cudaFree(&d_board_num);
     }
-    cout << "cudaSudokuSolver takes time: " << CycleTimer::currentSeconds() - time << endl;
+    // cout << "cudaSudokuSolver takes time: " << CycleTimer::currentSeconds() - time << endl;
     return 0;
 }
