@@ -142,7 +142,7 @@ int main(int argc, char* argv[]) {
         cudaMemcpy(host_solution, d_solution, boardSize * boardSize * sizeof(int), cudaMemcpyDeviceToHost);
 
         // print solution
-        int twoDArray[9][9];
+        int twoDArray[boardSize][boardSize];
         convertTo2DArray(host_solution, twoDArray);
         printSudoku(twoDArray);
         // for(int i = 0; i < boardSize; i++) {
