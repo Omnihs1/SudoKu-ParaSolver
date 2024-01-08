@@ -64,14 +64,6 @@ void SolvingKernel(int* boards, int boardCnt, int* solution, int numThreads, int
         int emptyIndex[boardSize*boardSize];
         int start = idx * boardSize * boardSize;
         for (int i = start; i < (idx+1) * boardSize * boardSize; i++) {
-            // if (idx == 32){
-            //   // printf("%d \n", idx);
-            //   printf("%d ", boards[i]);
-            // }
-            // if(idx == 35){
-            //   // printf("%d \n", idx);
-            //   printf("%d ", boards[i]);
-            // }
             localBoard[i-start] = boards[i];
             if (!localBoard[i-start]) {
                 emptyIndex[emptyCnt] = i-start;
