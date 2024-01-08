@@ -98,7 +98,7 @@ void SolvingKernel(int* boards, int boardCnt, int* solution, int numThreads, int
             // solved board found 
             *finished = 1;
             // copy board to output
-            printf("\n%d\n", idx);
+            // printf("\n%d\n", idx);
             memcpy(solution, localBoard, boardSize*boardSize*sizeof(int));
             break;
         }
@@ -151,6 +151,17 @@ BoardGenerator(int* prev_board_num, int* new_boards, int DEPTH) {
         cudaMemcpy(&num, prev_board_num, sizeof(int), cudaMemcpyDeviceToHost);
         printf("total boards after an iteration %d: %d \n", i + 1, num);
     }
+#ifndef NDEBUG
+    int memSize = pow(2, 26);
+    int *board = (int*)malloc(memSize * sizeof(int));
+    cudaMemcpy(board, new_boards, memSize * sizeof(int), cudaMemcpyDeviceToHost);
+    for(int i = 0; i < num; i++){
+      for(int j = 0; j < 81; j++){
+        printf("%5d", board[i*81+j]);
+      }
+      printf("\n");
+    }
+#endif
 }
 
 void 
