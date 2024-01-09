@@ -2,7 +2,6 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <driver_functions.h>
-#include "Board.hpp"
 #include "parallelsudoku.cuh"
 #include "CycleTimer.h"
 #define UPDIV(n, d) (((n)+(d)-1)/(d))
@@ -138,12 +137,13 @@ BoardGenerator(int* prev_boards, int* prev_board_num, int* new_boards, int DEPTH
         int block = UPDIV(num, threadsPerBlock);
         cudaMemset(prev_board_num, 0, sizeof(int));
         if(i%2 ==  0){
-          BoardGenerationKernel<<<block, threadsPerBlock>>>(prev_boards, prev_board_num, num, new_boards, block*threadsPerBlock);
+            cudaMemset(new_boards, 0, pow(2, 26) * sizeof(int));
+            BoardGenerationKernel<<<block, threadsPerBlock>>>(prev_boards, prev_board_num, num, new_boards, block*threadsPerBlock);
         }
         else{
-          int *temp = new_boards;
-          prev_boards = temp;
-          BoardGenerationKernel<<<block, threadsPerBlock>>>(prev_boards, prev_board_num, num, new_boards, block*threadsPerBlock);
+            int *temp = new_boards;
+            prev_boards = temp;
+            BoardGenerationKernel<<<block, threadsPerBlock>>>(prev_boards, prev_board_num, num, new_boards, block*threadsPerBlock);
         }
         cudaMemcpy(&num, prev_board_num, sizeof(int), cudaMemcpyDeviceToHost);
         printf("total boards after an iteration %d: %d \n", i + 1, num);
