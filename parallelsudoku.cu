@@ -4,9 +4,13 @@
 #include <driver_functions.h>
 #include "parallelsudoku.cuh"
 #include "CycleTimer.h"
+#include <stdlib.h>
+#include <iostream>
 #define UPDIV(n, d) (((n)+(d)-1)/(d))
 #define NDEBUG 1
 const int threadsPerBlock = 512;
+const int box_size = 3;
+using namespace std;
 
 // function to examine if there are conflicts or not if cell [row][col] is num
 __device__
