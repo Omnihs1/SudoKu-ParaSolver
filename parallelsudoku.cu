@@ -2,7 +2,7 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <driver_functions.h>
-#include "board.hpp"
+#include "Board.hpp"
 #include "parallelsudoku.cuh"
 #include "CycleTimer.h"
 #define UPDIV(n, d) (((n)+(d)-1)/(d))
