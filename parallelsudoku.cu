@@ -112,7 +112,6 @@ void BoardGenerationKernel(int* board_num, int prev_board_num, int* new_boards, 
         int start = idx * boardSize * boardSize;
         for (int i = start; i < (idx+1) * boardSize * boardSize; i++) {
             localBoard[i-start] = new_boards[i];
-            new_boards[boardSize*boardSize*offset+ii] = localBoard[ii];
         }
         int emptyIdx = findNextEmptyCellIndex(localBoard, 0);
         if (emptyIdx == boardSize*boardSize)  return;
