@@ -111,6 +111,7 @@ void BoardGenerationKernel(int* prev_boards, int* board_num, int prev_board_num,
     for (int idx = tidx; idx < prev_board_num; idx+=numThreads) {
         int start = idx * boardSize * boardSize;
         for (int i = start; i < (idx+1) * boardSize * boardSize; i++) {
+            __syncthreads();
             localBoard[i-start] = prev_boards[i];
         }
         int emptyIdx = findNextEmptyCellIndex(localBoard, 0);
@@ -136,14 +137,13 @@ BoardGenerator(int* prev_boards, int* prev_board_num, int* new_boards, int DEPTH
     for (i = 0; i < DEPTH; i++) {
         int block = UPDIV(num, threadsPerBlock);
         cudaMemset(prev_board_num, 0, sizeof(int));
-        BoardGenerationKernel<<<block, threadsPerBlock>>>(prev_boards, prev_board_num, num, new_boards, block*threadsPerBlock);
-        // reset new boards
-        if(i != (DEPTH - 1)) {
-            // printf("%d", i);
-            int *temp = prev_boards;
-            prev_boards = new_boards;
-            new_boards = temp;
-            cudaMemset(new_boards, 0, pow(2,26) * sizeof(int));
+        if(i%2 ==  0){
+          BoardGenerationKernel<<<block, threadsPerBlock>>>(prev_boards, prev_board_num, num, new_boards, block*threadsPerBlock);
+        }
+        else{
+          int *temp = new_boards;
+          prev_boards = temp;
+          BoardGenerationKernel<<<block, threadsPerBlock>>>(prev_boards, prev_board_num, num, new_boards, block*threadsPerBlock);
         }
         cudaMemcpy(&num, prev_board_num, sizeof(int), cudaMemcpyDeviceToHost);
         printf("total boards after an iteration %d: %d \n", i + 1, num);
