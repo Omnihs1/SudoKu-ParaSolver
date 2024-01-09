@@ -1,5 +1,7 @@
 #include <iostream>
 using namespace std;
+#include <algorithm>
+#include <vector>
 
 void displayBoard(int a[9][9], vector<int> b)
 {
