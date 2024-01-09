@@ -140,7 +140,7 @@ BoardGenerator(int* prev_boards, * prev_board_num, int* new_boards, int DEPTH) {
         // reset new boards
         if(i != (DEPTH - 1)) {
             prev_boards = new_boards;
-            cudaMemset(new_boards, 0, memSize * sizeof(int));
+            cudaMemset(new_boards, 0, pow(2,26) * sizeof(int));
         }
         cudaMemcpy(&num, prev_board_num, sizeof(int), cudaMemcpyDeviceToHost);
         printf("total boards after an iteration %d: %d \n", i + 1, num);
