@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
                 cout << "\033[31m" << board[i * boardSize + j] << "\033[0m "
                      << " ";
             else
-                cout << "\033[30m" << board[i * boardSize + j] << "\033[0m "
+                cout << "\033[37m" << board[i * boardSize + j] << "\033[0m "
                      << " ";
         }
         cout << endl;

@@ -29,7 +29,7 @@ void displayBoard(int a[9][9], vector<int> b)
                 cout << "\033[32m" << a[i][j] << "\033[0m "
                      << " ";
             else
-                cout << "\033[30m" << a[i][j] << "\033[0m "
+                cout << "\033[37m" << a[i][j] << "\033[0m "
                      << " ";
         }
         cout << endl;
