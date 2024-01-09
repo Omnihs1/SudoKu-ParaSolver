@@ -24,11 +24,35 @@ int main(int argc, char* argv[]) {
             myFile >> board[i*boardSize + j];
     }
     // print board
-    for(int i = 0; i < boardSize; i++) {
-        for(int j = 0; j < boardSize; j++){
-          cout << board[i*boardSize+j] << " ";
+    for (int i = 0; i < boardSize; i++)
+    {
+        if (i % 3 == 0 && i != 0)
+        {
+            cout << "------------------------------\n";
         }
-          cout << endl;
+        for (int j = 0; j < boardSize; j++)
+        {
+            if (j % 3 == 0 && j != 0)
+            {
+                cout << "| ";
+            }
+            if (board[i * boardSize + j] == 0)
+                cout << "\033[31m" << board[i * boardSize + j] << "\033[0m "
+                     << " ";
+            else
+                cout << "\033[30m" << board[i * boardSize + j] << "\033[0m "
+                     << " ";
+        }
+        cout << endl;
+    }
+    vector<int> storedValue;
+    for (int i = 0; i < 9; i++)
+    {
+        for (int j = 0; j < 9; j++)
+        {
+            if (board[i * boardSize + j] != 0)
+                storedValue.push_back(i * boardSize + j);
+        }
     }
     bool done = false;
     double time = CycleTimer::currentSeconds();
@@ -95,7 +119,7 @@ int main(int argc, char* argv[]) {
         cout << "MemSize : " << memSize << endl;
         cout << "DEPTH : " << DEPTH << endl;
 
-        outputFile.open("outputTime.csv");
+        outputFile.open("outputTime.csv", ios::app);
         
         // cudaMalloc(&d_new_boards, memSize * sizeof(int));
         // cudaMalloc(&d_solution, boardSize * boardSize * sizeof(int));
@@ -153,7 +177,7 @@ int main(int argc, char* argv[]) {
         // print solution
         int twoDArray[boardSize][boardSize];
         convertTo2DArray(host_solution, twoDArray);
-        printSudoku(twoDArray);
+        displayBoard(twoDArray,storedValue);
         // for(int i = 0; i < boardSize; i++) {
         //     for(int j = 0; j < boardSize; j++){
         //       cout << host_solution[i*boardSize+j] << " ";
