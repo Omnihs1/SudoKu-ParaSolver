@@ -113,20 +113,19 @@ void BoardGenerationKernel(int* board_num, int prev_board_num, int* new_boards, 
         for (int i = start; i < (idx+1) * boardSize * boardSize; i++) {
             localBoard[i-start] = new_boards[i];
         }
-        int emptyIdx = findNextEmptyCellIndex(localBoard, 0);
-        if (emptyIdx == boardSize*boardSize)  return;
-        for (int k = 1; k <= boardSize; k++) {
-            localBoard[emptyIdx] = k;
-            if (noConflicts(localBoard, emptyIdx/boardSize, emptyIdx%boardSize, k)) {
-                int offset = atomicAdd(board_num, 1);
-                for (int ii = 0; ii < boardSize*boardSize; ii++) {
-                    __syncthreads();
-                    new_boards[boardSize*boardSize*offset+ii] = localBoard[ii];
-                    __syncthreads();
+        for(int j = 0; j < 2; j++){
+            int emptyIdx = findNextEmptyCellIndex(localBoard, 0);
+            if (emptyIdx == boardSize*boardSize)  return;
+            for (int k = 1; k <= boardSize; k++) {
+                localBoard[emptyIdx] = k;
+                if (noConflicts(localBoard, emptyIdx/boardSize, emptyIdx%boardSize, k)) {
+                    int offset = atomicAdd(board_num, 1);
+                    for (int ii = 0; ii < boardSize*boardSize; ii++) {
+                        __syncthreads();
+                        new_boards[boardSize*boardSize*offset+ii] = localBoard[ii];
+                        __syncthreads();
+                    }
                 }
-            }
-            else{
-                localBoard[emptyIdx] = 0;
             }
         }
     }
