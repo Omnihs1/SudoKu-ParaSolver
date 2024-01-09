@@ -79,6 +79,7 @@ int main(int argc, char* argv[]) {
 #endif
     // 2. backtracking
     if (!done){
+        int *d_old_boards;
         int *d_new_boards;
         int *d_solution;
         int *d_board_num;
@@ -102,6 +103,13 @@ int main(int argc, char* argv[]) {
 
         //check allocation memory
         cudaError_t cudaStatus;
+        cudaStatus = cudaMalloc(&d_old_boards, memSize * sizeof(int));
+        if (cudaStatus != cudaSuccess) {
+            cout << "cudaMalloc failed for d_new_boards" << endl;
+            // Handle the memory allocation failure appropriately
+            // e.g., clean up any previously allocated memory, return an error code, etc.
+        }
+
         cudaStatus = cudaMalloc(&d_new_boards, memSize * sizeof(int));
         if (cudaStatus != cudaSuccess) {
             cout << "cudaMalloc failed for d_new_boards" << endl;
@@ -122,14 +130,15 @@ int main(int argc, char* argv[]) {
             // Handle the memory allocation failure appropriately
             // e.g., clean up any previously allocated memory, return an error code, etc.
         }
+        cudaMemset(d_old_boards, 0, memSize * sizeof(int));
         cudaMemset(d_new_boards, 0, memSize * sizeof(int));
         cudaMemset(d_solution, 0, boardSize * boardSize * sizeof(int));
         cudaMemset(d_board_num, 0, sizeof(int));
 
-        cudaMemcpy(d_new_boards, board, boardSize * boardSize * sizeof(int), cudaMemcpyHostToDevice);
+        cudaMemcpy(d_old_boards, board, boardSize * boardSize * sizeof(int), cudaMemcpyHostToDevice);
 
         double stime = CycleTimer::currentSeconds();
-        BoardGenerator(d_board_num, d_new_boards, DEPTH);
+        BoardGenerator(d_old_boards,d_board_num, d_new_boards, DEPTH);
         
         cudaMemcpy(&host_board_num, d_board_num, sizeof(int), cudaMemcpyDeviceToHost);
         // host_board_num = 1;

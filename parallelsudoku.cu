@@ -102,7 +102,7 @@ void SolvingKernel(int* boards, int boardCnt, int* solution, int numThreads, int
 // kernel that generates new boards from previous ones
 // call this kernel multiple times to have 
 __global__
-void BoardGenerationKernel(int* board_num, int prev_board_num, int* new_boards, int numThreads) {
+void BoardGenerationKernel(int* prev_boards, int* board_num, int prev_board_num, int* new_boards, int numThreads) {
     int tidx = blockIdx.x * blockDim.x + threadIdx.x;
     
     int* localBoard = (int*) malloc(sizeof(int)*boardSize*boardSize);
@@ -111,7 +111,7 @@ void BoardGenerationKernel(int* board_num, int prev_board_num, int* new_boards, 
     for (int idx = tidx; idx < prev_board_num; idx+=numThreads) {
         int start = idx * boardSize * boardSize;
         for (int i = start; i < (idx+1) * boardSize * boardSize; i++) {
-            localBoard[i-start] = new_boards[i];
+            localBoard[i-start] = prev_boards[i];
         }
         int emptyIdx = findNextEmptyCellIndex(localBoard, 0);
         if (emptyIdx == boardSize*boardSize)  return;
@@ -130,13 +130,18 @@ void BoardGenerationKernel(int* board_num, int prev_board_num, int* new_boards, 
 }
 
 void 
-BoardGenerator(int* prev_board_num, int* new_boards, int DEPTH) {
+BoardGenerator(int* prev_boards, * prev_board_num, int* new_boards, int DEPTH) {
     int i;
     int num = 1;
     for (i = 0; i < DEPTH; i++) {
         int block = UPDIV(num, threadsPerBlock);
         cudaMemset(prev_board_num, 0, sizeof(int));
-        BoardGenerationKernel<<<block, threadsPerBlock>>>(prev_board_num, num, new_boards, block*threadsPerBlock);
+        BoardGenerationKernel<<<block, threadsPerBlock>>>(prev_boards, prev_board_num, num, new_boards, block*threadsPerBlock);
+        // reset new boards
+        if(i != (DEPTH - 1)) {
+            prev_boards = new_boards;
+            cudaMemset(new_boards, 0, memSize * sizeof(int));
+        }
         cudaMemcpy(&num, prev_board_num, sizeof(int), cudaMemcpyDeviceToHost);
         printf("total boards after an iteration %d: %d \n", i + 1, num);
     }
