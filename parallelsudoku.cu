@@ -169,5 +169,5 @@ cudaSudokuSolver(int* boards, int board_num, int* solution) {
     cudaMemset(finished, 0, sizeof(int));
     cout << "Block: " << block << ", " << "threadsPerBlock: " << threadsPerBlock << endl;
     SolvingKernel<<<block, threadsPerBlock>>>(boards, board_num, solution, block*threadsPerBlock, finished);
-    // cudaDeviceSynchronize();
+    cudaDeviceSynchronize();
 }
