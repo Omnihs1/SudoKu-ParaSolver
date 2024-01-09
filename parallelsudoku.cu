@@ -139,7 +139,7 @@ BoardGenerator(int* prev_boards, int* prev_board_num, int* new_boards, int DEPTH
         BoardGenerationKernel<<<block, threadsPerBlock>>>(prev_boards, prev_board_num, num, new_boards, block*threadsPerBlock);
         // reset new boards
         if(i != (DEPTH - 1)) {
-            printf("%d", i);
+            // printf("%d", i);
             int *temp = prev_boards;
             prev_boards = new_boards;
             new_boards = temp;
